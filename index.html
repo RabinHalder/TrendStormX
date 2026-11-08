@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Watch Ad</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
-<script src='//libtl.com/sdk.js' data-zone='12017664' data-sdk='show_12017664'></script>
+<script src='//libtl.com/sdk.js' data-zone='12218992' data-sdk='show_12218992'></script>
 <style>
   body { font-family: -apple-system, sans-serif; background:#0f0f0f; color:#fff; display:flex; flex-direction:column; align-items:center; justify-content:center; height:100vh; margin:0; text-align:center; padding:24px; box-sizing:border-box; }
   #status { color:#aaa; font-size:15px; margin:16px 0; min-height:20px; }
@@ -29,15 +29,14 @@
   const status = document.getElementById("status");
   const btn = document.getElementById("watchBtn");
 
-  // SDK script load hote shomoy nite pare — poll kore dekhi function ready holo kina
   let tries = 0;
   const waitForSdk = setInterval(function () {
     tries++;
-    if (typeof show_12017664 === "function") {
+    if (typeof show_12218992 === "function") {
       clearInterval(waitForSdk);
       btn.disabled = false;
       status.innerText = "Tap below to watch";
-    } else if (tries > 40) { // ~20 seconds
+    } else if (tries > 40) {
       clearInterval(waitForSdk);
       status.innerText = "⚠️ Ad network unreachable. Check connection, then reopen.";
     }
@@ -63,7 +62,7 @@
     btn.disabled = true;
     status.innerText = "Loading ad...";
 
-    if (typeof show_12017664 !== "function") {
+    if (typeof show_12218992 !== "function") {
       status.innerText = "⚠️ Ad SDK not ready. Wait a moment and retry.";
       btn.disabled = false;
       return;
@@ -78,7 +77,7 @@
       }
     }, 20000);
 
-    show_12017664().then(function () {
+    show_12218992().then(function () {
       if (settled) return;
       settled = true;
       clearTimeout(watchdog);
