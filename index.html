@@ -62,25 +62,26 @@
         btn.innerText = "↻ Tap to retry";
         btn.classList.add("show");
       }
-    }, 15000);
+    }, 30000);
 
-    show_12218992().then(function () {
-      if (settled) return;
-      settled = true;
-      clearTimeout(watchdog);
-      finish(true);
-    }).catch(function () {
-      if (settled) return;
-      settled = true;
-      started = false;
-      clearTimeout(watchdog);
-      finish(false);
-    });
+    show_12218992({ type: "end", requestVar: "ad1", timeout: 25 })
+      .then(function (result) {
+        if (settled) return;
+        settled = true;
+        clearTimeout(watchdog);
+        finish(true);
+      })
+      .catch(function () {
+        if (settled) return;
+        settled = true;
+        started = false;
+        clearTimeout(watchdog);
+        finish(false);
+      });
   }
 
   btn.addEventListener("click", playAd);
 
-  // SDK ready howar jonno wait kore, tarpor automatic play — button chapte hobe na
   let tries = 0;
   const waitForSdk = setInterval(function () {
     tries++;
