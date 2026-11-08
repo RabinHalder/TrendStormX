@@ -8,12 +8,15 @@
 <script src='//libtl.com/sdk.js' data-zone='12017664' data-sdk='show_12017664'></script>
 <style>
   body { font-family: -apple-system, sans-serif; background:#0f0f0f; color:#fff; display:flex; flex-direction:column; align-items:center; justify-content:center; height:100vh; margin:0; text-align:center; padding:24px; box-sizing:border-box; }
-  #status { color:#aaa; font-size:16px; margin-top:12px; }
+  #status { color:#aaa; font-size:15px; margin:16px 0; min-height:20px; }
+  button { background:#2ea043; color:#fff; border:none; padding:16px 36px; font-size:18px; border-radius:12px; }
+  button:disabled { background:#444; }
 </style>
 </head>
 <body>
-<h2>📺 Loading Ad…</h2>
-<p id="status">Please wait</p>
+<h2>📺 Watch Ad to Unlock</h2>
+<p id="status">Tap below to watch</p>
+<button id="watchBtn">▶️ Watch Ad</button>
 
 <script>
   Telegram.WebApp.ready();
@@ -24,10 +27,12 @@
   const tok = params.get("tok") || "";
   const cb  = params.get("cb") || "";
   const status = document.getElementById("status");
+  const btn = document.getElementById("watchBtn");
 
   function finish(ok) {
     if (!ok) {
-      status.innerText = "❌ Ad was not completed. Close and try again.";
+      status.innerText = "❌ Ad was not completed. Tap to try again.";
+      btn.disabled = false;
       return;
     }
     status.innerText = "✅ Done! Closing...";
@@ -40,10 +45,36 @@
     });
   }
 
-  show_12017664().then(function () {
-    finish(true);
-  }).catch(function () {
-    finish(false);
+  btn.addEventListener("click", function () {
+    btn.disabled = true;
+    status.innerText = "Loading ad...";
+
+    if (typeof show_12017664 !== "function") {
+      status.innerText = "⚠️ Ad SDK failed to load. Check your connection and retry.";
+      btn.disabled = false;
+      return;
+    }
+
+    let settled = false;
+    const watchdog = setTimeout(function () {
+      if (!settled) {
+        settled = true;
+        status.innerText = "⚠️ No ad available right now. Tap to retry.";
+        btn.disabled = false;
+      }
+    }, 20000);
+
+    show_12017664().then(function () {
+      if (settled) return;
+      settled = true;
+      clearTimeout(watchdog);
+      finish(true);
+    }).catch(function () {
+      if (settled) return;
+      settled = true;
+      clearTimeout(watchdog);
+      finish(false);
+    });
   });
 </script>
 </body>
