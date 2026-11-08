@@ -1,1 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Watch Ad</title>
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<script src='//libtl.com/sdk.js' data-zone='12017664' data-sdk='show_12017664'></script>
+<style>
+  body { font-family: -apple-system, sans-serif; background:#0f0f0f; color:#fff; display:flex; flex-direction:column; align-items:center; justify-content:center; height:100vh; margin:0; text-align:center; padding:24px; box-sizing:border-box; }
+  h2 { margin-bottom:8px; }
+  #status { color:#aaa; font-size:15px; margin:16px 0; min-height:20px; }
+  button { background:#2ea043; color:#fff; border:none; padding:14px 32px; font-size:17px; border-radius:10px; }
+  button:disabled { background:#444; }
+</style>
+</head>
+<body>
+<h2>📺 Watch Ad to Unlock</h2>
+<p id="status">Tap the button to start</p>
+<button id="watchBtn">Watch Ad</button>
 
+<script>
+  Telegram.WebApp.ready();
+  Telegram.WebApp.expand();
+
+  const params = new URLSearchParams(window.location.search);
+  const vid = params.get("vid") || "";
+  const tok = params.get("tok") || "";
+
+  const btn = document.getElementById("watchBtn");
+  const status = document.getElementById("status");
+
+  btn.addEventListener("click", function () {
+    btn.disabled = true;
+    status.innerText = "Loading ad...";
+
+    show_12017664().then(function () {
+      status.innerText = "✅ Ad completed! Sending...";
+      Telegram.WebApp.sendData(JSON.stringify({ vid: vid, tok: tok, status: "watched" }));
+    }).catch(function () {
+      status.innerText = "❌ Ad was not completed. Try again.";
+      btn.disabled = false;
+    });
+  });
+</script>
+</body>
+</html>
