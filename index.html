@@ -10,13 +10,13 @@
   body { font-family: -apple-system, sans-serif; background:#0f0f0f; color:#fff; display:flex; flex-direction:column; align-items:center; justify-content:center; height:100vh; margin:0; text-align:center; padding:24px; box-sizing:border-box; }
   #status { color:#aaa; font-size:15px; margin:16px 0; min-height:20px; }
   button { background:#2ea043; color:#fff; border:none; padding:16px 36px; font-size:18px; border-radius:12px; }
-  button:disabled { background:#444; }
+  button:disabled { background:#444; opacity:0.6; }
 </style>
 </head>
 <body>
 <h2>📺 Watch Ad to Unlock</h2>
-<p id="status">Tap below to watch</p>
-<button id="watchBtn">▶️ Watch Ad</button>
+<p id="status">Preparing ad...</p>
+<button id="watchBtn" disabled>▶️ Watch Ad</button>
 
 <script>
   Telegram.WebApp.ready();
@@ -28,6 +28,20 @@
   const cb  = params.get("cb") || "";
   const status = document.getElementById("status");
   const btn = document.getElementById("watchBtn");
+
+  // SDK script load hote shomoy nite pare — poll kore dekhi function ready holo kina
+  let tries = 0;
+  const waitForSdk = setInterval(function () {
+    tries++;
+    if (typeof show_12017664 === "function") {
+      clearInterval(waitForSdk);
+      btn.disabled = false;
+      status.innerText = "Tap below to watch";
+    } else if (tries > 40) { // ~20 seconds
+      clearInterval(waitForSdk);
+      status.innerText = "⚠️ Ad network unreachable. Check connection, then reopen.";
+    }
+  }, 500);
 
   function finish(ok) {
     if (!ok) {
@@ -50,7 +64,7 @@
     status.innerText = "Loading ad...";
 
     if (typeof show_12017664 !== "function") {
-      status.innerText = "⚠️ Ad SDK failed to load. Check your connection and retry.";
+      status.innerText = "⚠️ Ad SDK not ready. Wait a moment and retry.";
       btn.disabled = false;
       return;
     }
